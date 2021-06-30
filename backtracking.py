@@ -8,40 +8,38 @@ def find_empty(board):
 
 
 def valid(board, num, pos):
-    for i in range(len(board)):  # Проверяю по линиям
-        if board[pos[0]][i] == num and pos[1] != i:  # pos[0] - индекс списка в board (линия), pos[1] -
-            # индекс элемента (стобец)
+    for i in range(len(board)):  # Checking the row
+        if board[pos[0]][i] == num and pos[1] != i:  # pos[0] - row, pos[1] -
+            # idx of elem (column)
             return False
 
     for i in range(len(board)):
         if board[i][pos[1]] == num and pos[0] != i:
             return False
 
-    box_x = pos[1] // 3  # Начальный индекс для определения длины квадрата
-    box_y = pos[0] // 3  # Тож самое, только это его высота
-    for i in range(box_y*3, box_y*3 + 3):  # Шаримся в пределах 3х списков (3 линии чисел в этом квадрате)
-        for j in range(box_x*3, box_x*3 + 3):  # Три слолбца в виде элементов списка
+    box_x = pos[1] // 3  # Initial idx for square's length
+    box_y = pos[0] // 3  # for height
+    for i in range(box_y*3, box_y*3 + 3):  # Checking the elements in range of 3 rows (lists)
+        for j in range(box_x*3, box_x*3 + 3):  # In range of 3 columns
             if board[i][j] == num and (i, j) != pos:
                 return False
     return True
 
 
-def solve(board):  # НАЧАЛО
-    empty = find_empty(board)  # Иду по очереди, при каждом вызове проверяю, где следующий ноль
+def solve(board):  # BEGINNING
+    empty = find_empty(board)  # Searching the next zero 
     if not empty:
-        return True  # Таблица заполнена
+        return True  # Board is filled
     else:
         row, column = empty
     for i in range(1, 10):
-        if valid(board, i, (row, column)):  # Проверка, которая решит, подходит ли цифра при данном списке
+        if valid(board, i, (row, column)):  # if the i fits instead of 0
             board[row][column] = i
 
-            if solve(board):  # С вставленным значением повторяю функцию для списка с этим значением
-                return True   # До этого дойдет, когда таблица заполнится, потом все предыдущие solve для
-            # предыдущих значений начнут выдавать True
+            if solve(board):  # start solving with new board (with 0 switched to i)
+                return True
 
-            board[row][column] = 0  # Если с новым значением не получилось, чекаю следующее
-            # (при этом выше вызванная функция проверила в своем цикле, что возможных значений нет)
+            board[row][column] = 0  # If it hasn't solved with i, then we check the next
     return False
 
 
@@ -85,14 +83,6 @@ b = [
 ]
 
 show(b)
-print("Результат:")
+print("Result:")
 solve(b)
 show(b)
-print()
-print("Список заполненный в функции", end="\n\n")
-bl = fill()
-show(bl)
-print("Результат:", end="\n")
-solve(bl)
-show(bl)
-print(bl)
